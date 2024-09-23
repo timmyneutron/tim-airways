@@ -11,32 +11,55 @@ export function useAirportOptions(search: string) {
         setAirportOptions([]);
         return;
       }
-  
+      
+      // The api has two endpoints for searching by name and by IATA code
+      // So we make an array of promises for both
       const searches: Array<Promise<Response>> = [nameSearch(search)];
   
+      // Only search for IATA code if the search string is 3 letters
       const iataCodeRegex: RegExp = /^[a-zA-Z]{3}$/;
-  
       if (iataCodeRegex.test(search)) {
         searches.push(iataSearch(search));
       }
   
       Promise.all(searches).then((responses) => {
         if (responses.length === 1) {
-          responses[0].json().then(options => {
-            setAirportOptions(options);
-          });
+          if (responses[0].ok) {
+            responses[0].json().then(options => {
+              setAirportOptions(options);
+            });
+          }
+          return;
         }
+
         if (responses.length === 2) {
-          Promise.all([responses[0].json(), responses[1].json()]).then(data => {
-            const options: Array<Airport> = data[1].length === 0 ? data[0] : data[1];
-            setAirportOptions(options);
-          });
+          // If there are two responses, use the IATA code search
+          // If the IATA code search returns no results, use the name search
+          if (responses[0].ok && responses[1].ok) {
+            Promise.all([responses[0].json(), responses[1].json()]).then(data => {
+              const options: Array<Airport> = data[1].length === 0 ? data[0] : data[1];
+              setAirportOptions(options);
+            });
+            return;
+          }
+
+          if (responses[0].ok) {
+            responses[0].json().then(options => {
+              setAirportOptions(options);
+            });
+          }
+
+          if (responses[1].ok) {
+            responses[1].json().then(options => {
+              setAirportOptions(options);
+            });
+          }
         }
       });
     };
   
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(useDebouncedCallback(fetchAirportOptions, 200), [search]);
+    useEffect(useDebouncedCallback(fetchAirportOptions, 100), [search]);
   
     return airportOptions;
   };

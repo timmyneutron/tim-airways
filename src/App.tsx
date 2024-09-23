@@ -16,6 +16,8 @@ function App() {
 
   return (
     <div className="App">
+      <h1 className="title">✈️ Tim Airways ✈️</h1>
+      <h3 className="tagline">Calculating the distance between two airports in the US in nautical miles since 2024</h3>
       <div className="input-box">
         <AirportInput
           label="departure"
@@ -28,33 +30,43 @@ function App() {
           setSelectedAirport={setArrivalAirport}
         />
       </div>
-      {departureAirport && arrivalAirport && <p className="distance-text">The distance between <span className="distance-text-bold">{departureAirport.name}</span> and <span className="distance-text-bold">{arrivalAirport.name}</span> is <span className="distance-text-bold">{haversineDistance(departureAirport, arrivalAirport).toFixed(2)} nautical miles</span>.</p>}
+      {departureAirport && arrivalAirport &&
+        <div className="distance-container">
+          <div className="distance-text">The distance between </div>
+          <div className="distance-text-bold">{departureAirport.name}</div>
+          <div className="distance-text"> and </div>
+          <div className="distance-text-bold">{arrivalAirport.name}</div>
+          <div className="distance-text"> is </div>
+          <div className="distance-text-bold">{haversineDistance(departureAirport, arrivalAirport).toFixed(2)} nautical miles</div>
+        </div>}
       {isLoaded ? (
-        <GoogleMap
-          mapContainerStyle={{width: "100%", height: "500px"}}
-          center={{ lat: 50, lng: -110}}
-          zoom={window.innerWidth < 700 ? 2 : 3}
-        >
-          {departureAirport &&
-            <MarkerF
-              position={{
-                lat:parseFloat(departureAirport.latitude),
-                lng: parseFloat(departureAirport.longitude) }}
-            />}
-          {arrivalAirport &&
-            <MarkerF
-              position={{
-                lat: parseFloat(arrivalAirport.latitude),
-                lng: parseFloat(arrivalAirport.longitude) }}
-            />}
-          {departureAirport && arrivalAirport &&
-            <PolylineF
-              path={[
-                { lat: parseFloat(departureAirport.latitude), lng: parseFloat(departureAirport.longitude) },
-                { lat: parseFloat(arrivalAirport.latitude), lng: parseFloat(arrivalAirport.longitude) }
-              ]}
-            />}
-        </GoogleMap>
+        <div className="map">
+          <GoogleMap
+            mapContainerStyle={{width: "100%", height: "500px"}}
+            center={{ lat: 50, lng: -110}}
+            zoom={window.innerWidth < 700 ? 2 : 3}
+          >
+            {departureAirport &&
+              <MarkerF
+                position={{
+                  lat:parseFloat(departureAirport.latitude),
+                  lng: parseFloat(departureAirport.longitude) }}
+              />}
+            {arrivalAirport &&
+              <MarkerF
+                position={{
+                  lat: parseFloat(arrivalAirport.latitude),
+                  lng: parseFloat(arrivalAirport.longitude) }}
+              />}
+            {departureAirport && arrivalAirport &&
+              <PolylineF
+                path={[
+                  { lat: parseFloat(departureAirport.latitude), lng: parseFloat(departureAirport.longitude) },
+                  { lat: parseFloat(arrivalAirport.latitude), lng: parseFloat(arrivalAirport.longitude) }
+                ]}
+              />}
+          </GoogleMap>
+        </div>
     ) : <></>}
     </div>
   );

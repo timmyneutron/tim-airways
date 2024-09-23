@@ -16,7 +16,11 @@ function App() {
 
   return (
     <div className="App">
-      <h1 className="title">✈️ Tim Airways ✈️</h1>
+      <div className="title-container">
+        <h1 className="icon">✈️</h1>
+        <h1 className="title">Tim Airways</h1>
+        <h1 className="icon">✈️</h1>
+      </div>
       <h3 className="tagline">Calculating the distance between two airports in the US in nautical miles since 2024</h3>
       <div className="input-box">
         <AirportInput
